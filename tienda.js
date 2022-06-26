@@ -1,20 +1,23 @@
 
 class Prenda {
-    constructor( tipo, precio ){
+    constructor( tipo, precio,descripcion, index ){
         this.tipo = tipo;
         this.precio = precio;
+        this.descripcion = descripcion;
+        this.index = index;
     }
 }
 
-const prendaRemera = new Prenda ('R',500 );
-const prendaPantalon = new Prenda ('P',700 );
-const prendaMedias = new Prenda ('M',80 );
+const prendaRemera = new Prenda ('R',500, "Remera" );
+const prendaPantalon = new Prenda ('P',700, "Pantalon" );
+const prendaMedias = new Prenda ('M',80, "Par de Medias" );
 
 function calculoPedido () {
     
     let prodSelect;
     let sumaFinal = 0;
-    let carrito = [];
+    let carrito = []; 
+    let productoIndex = 0;
 
     alert('¡Bienvenido a nuestra tienda online!')
 
@@ -28,16 +31,22 @@ function calculoPedido () {
         }
         
         if (prodSelect == 1){
-            carrito.push(prendaRemera)
+            carrito.push(new Prenda ('R',500, "Remera",++productoIndex ))
+            
         } else if (prodSelect == 2){
-            carrito.push(prendaPantalon)
+            carrito.push(new Prenda ('P',700, "Pantalon",++productoIndex ))
         } else if (prodSelect==3){
-            carrito.push(prendaMedias)
+            carrito.push(new Prenda ('M',80, "Par de Medias",++productoIndex ))
         }
     }
 
-    alert('La cantidad total de prendas es ' + carrito.length + '. El precio final de tu pedido es ' + carrito.reduce( (acc, prend) => acc + prend.precio, 0  ) + '\r¡Muchas gracias!')
+    sumaFinal = carrito.reduce( (acc, prend) => acc + prend.precio, 0  );
+    alert('La cantidad total de prendas es ' + carrito.length + '. El precio final de tu pedido es ' + sumaFinal + '\r¡Muchas gracias!')
     alert('Tenes '+ cantidadPorPrenda(carrito, 'R') + ' Remera(s)\r Tenes '+ cantidadPorPrenda(carrito, 'P') +' Pantalon(es)\r Tenes '+cantidadPorPrenda(carrito, 'M') +' par de Medias' )
+
+    mostrarCompra(carrito, sumaFinal);
+
+    
 }
 
 function esValorIncorrecto(prodSelect){
@@ -46,4 +55,21 @@ function esValorIncorrecto(prodSelect){
 
 function cantidadPorPrenda (carrito,tipoPrenda){
     return carrito.filter( (p)=> p.tipo == tipoPrenda).length
+}
+
+function mostrarCompra(carrito, sumaFinal){
+    let sectionProductos = document.getElementById("productosDisponibles");
+    let sectionTitulo = document.createElement("h1");
+    sectionTitulo.innerText = "Tu Carrito:"
+    sectionProductos.appendChild(sectionTitulo);
+
+    for (const producto of carrito) {
+        let productoDiv = document.createElement("div");
+        productoDiv.innerHTML = `<div> <b>Prenda ${producto.index}</b>:  ${producto.descripcion}  <b>Precio</b>:  ${producto.precio} </div>`
+        sectionProductos.appendChild(productoDiv);
+    }
+
+    let sectionTotal = document.createElement("div");
+    sectionTotal.innerHTML = `<h2><b>Total de la compra</b>: $${sumaFinal} </h2>` 
+    sectionProductos.appendChild(sectionTotal);
 }
