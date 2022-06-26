@@ -18,6 +18,12 @@ function calculoPedido () {
 
     alert('¡Bienvenido a nuestra tienda online!')
 
+    let carritoStorage = JSON.parse (localStorage.getItem('carrito'))
+    if (carritoStorage) {
+        alert ('Tenes ' + carritoStorage.length + " productos en tu carrito." )
+        console.log (carritoStorage)
+        carrito=carritoStorage;
+    }
     while(prodSelect != 0){
 
         prodSelect = parseInt(prompt("Ingrese número de artículo que desea comprar. Toque 0 (cero) cuando quiera completar su pedido:\r(1) Remera $500 \r(2) Pantalón $700 \r(3) Par de medias $80"));
@@ -28,12 +34,12 @@ function calculoPedido () {
         }
         
         if (prodSelect == 1){
-            carrito.push(new Prenda ('R',500, "Remera",++productoIndex ))
+            agregarProducto(new Prenda ('R',500, "Remera",++productoIndex ))
             
         } else if (prodSelect == 2){
-            carrito.push(new Prenda ('P',700, "Pantalon",++productoIndex ))
+            agregarProducto(new Prenda ('P',700, "Pantalon",++productoIndex ))
         } else if (prodSelect==3){
-            carrito.push(new Prenda ('M',80, "Par de Medias",++productoIndex ))
+            agregarProducto(new Prenda ('M',80, "Par de Medias",++productoIndex ))
         }
     }
 
@@ -42,7 +48,7 @@ function calculoPedido () {
     alert('Tenes '+ cantidadPorPrenda('R') + ' Remera(s)\r Tenes '+ cantidadPorPrenda('P') +' Pantalon(es)\r Tenes '+cantidadPorPrenda('M') +' par de Medias' )
 
     mostrarCompra();
-
+    localStorage.setItem("carrito", JSON.stringify(carrito));
     
 }
 
@@ -72,21 +78,26 @@ function mostrarCompra(){
     sectionTotal.id = "total-compra"
     sectionTotal.innerHTML = `<h2><b>Total de la compra</b>: $${sumaFinal} </h2>` 
     sectionProductos.appendChild(sectionTotal);
-
-    /*let botonesQuitar = document.getElementsByClassName("botonQuitar");
-    console.log(botonesQuitar);
-    botonesQuitar.forEach( b => b.addEventListener("click", () => {
-        b.remove()
-    }));*/
 }
 
 function quitarPrenda(e){
     console.log(document.getElementById("prenda-"+e));
     let prendaHTML = document.getElementById("prenda-"+e)
     let prenda = carrito.find(p => e == p.index);
-    sumaFinal -= prenda.precio;
+    sumaFinal -= prenda.precio; //sumaFinal = sumafinal - prenda.precio
     carrito.splice(e-1, 1);
     console.log(carrito);
     prendaHTML.remove();
-    document.getElementById("total-compra").innerHTML = `<h2><b>Total de la compra</b>: $${sumaFinal} </h2>` 
+    document.getElementById("total-compra").innerHTML = `<h2><b>Total de la compra</b>: $${sumaFinal} </h2>`
+    actualizarStorage (carrito);
+
+}
+
+function agregarProducto (producto) {
+    carrito.push(producto);
+   // localStorage.setItem("producto-"+ producto.index, JSON.stringify(producto));
+}
+
+function actualizarStorage (carritoActualizado){
+    localStorage.setItem("carrito", JSON.stringify(carritoActualizado));
 }
