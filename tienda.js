@@ -8,15 +8,12 @@ class Prenda {
     }
 }
 
-const prendaRemera = new Prenda ('R',500, "Remera" );
-const prendaPantalon = new Prenda ('P',700, "Pantalon" );
-const prendaMedias = new Prenda ('M',80, "Par de Medias" );
+let sumaFinal = 0;
+let carrito = []; 
 
 function calculoPedido () {
     
     let prodSelect;
-    let sumaFinal = 0;
-    let carrito = []; 
     let productoIndex = 0;
 
     alert('¡Bienvenido a nuestra tienda online!')
@@ -42,9 +39,9 @@ function calculoPedido () {
 
     sumaFinal = carrito.reduce( (acc, prend) => acc + prend.precio, 0  );
     alert('La cantidad total de prendas es ' + carrito.length + '. El precio final de tu pedido es ' + sumaFinal + '\r¡Muchas gracias!')
-    alert('Tenes '+ cantidadPorPrenda(carrito, 'R') + ' Remera(s)\r Tenes '+ cantidadPorPrenda(carrito, 'P') +' Pantalon(es)\r Tenes '+cantidadPorPrenda(carrito, 'M') +' par de Medias' )
+    alert('Tenes '+ cantidadPorPrenda('R') + ' Remera(s)\r Tenes '+ cantidadPorPrenda('P') +' Pantalon(es)\r Tenes '+cantidadPorPrenda('M') +' par de Medias' )
 
-    mostrarCompra(carrito, sumaFinal);
+    mostrarCompra();
 
     
 }
@@ -53,11 +50,11 @@ function esValorIncorrecto(prodSelect){
     prodSelect < 0 || prodSelect > 3 || isNaN(prodSelect)
 }
 
-function cantidadPorPrenda (carrito,tipoPrenda){
+function cantidadPorPrenda (tipoPrenda){
     return carrito.filter( (p)=> p.tipo == tipoPrenda).length
 }
 
-function mostrarCompra(carrito, sumaFinal){
+function mostrarCompra(){
     let sectionProductos = document.getElementById("productosDisponibles");
     let sectionTitulo = document.createElement("h1");
     sectionTitulo.innerText = "Tu Carrito:"
@@ -65,11 +62,31 @@ function mostrarCompra(carrito, sumaFinal){
 
     for (const producto of carrito) {
         let productoDiv = document.createElement("div");
-        productoDiv.innerHTML = `<div> <b>Prenda ${producto.index}</b>:  ${producto.descripcion}  <b>Precio</b>:  ${producto.precio} </div>`
+        productoDiv.innerHTML = `<div> <b>Prenda ${producto.index}</b>:  ${producto.descripcion}  <b>Precio</b>:  ${producto.precio} </div>
+        <button id=boton-${producto.index} class="botonQuitar" onclick=quitarPrenda(${producto.index})>Quitar prenda</button>`
+        productoDiv.id = "prenda-" + producto.index
         sectionProductos.appendChild(productoDiv);
     }
 
     let sectionTotal = document.createElement("div");
+    sectionTotal.id = "total-compra"
     sectionTotal.innerHTML = `<h2><b>Total de la compra</b>: $${sumaFinal} </h2>` 
     sectionProductos.appendChild(sectionTotal);
+
+    /*let botonesQuitar = document.getElementsByClassName("botonQuitar");
+    console.log(botonesQuitar);
+    botonesQuitar.forEach( b => b.addEventListener("click", () => {
+        b.remove()
+    }));*/
+}
+
+function quitarPrenda(e){
+    console.log(document.getElementById("prenda-"+e));
+    let prendaHTML = document.getElementById("prenda-"+e)
+    let prenda = carrito.find(p => e == p.index);
+    sumaFinal -= prenda.precio;
+    carrito.splice(e-1, 1);
+    console.log(carrito);
+    prendaHTML.remove();
+    document.getElementById("total-compra").innerHTML = `<h2><b>Total de la compra</b>: $${sumaFinal} </h2>` 
 }
